@@ -1,0 +1,162 @@
+/* src/app/components/dashboard/dashboard.component.css */
+.dashboard-root {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  padding: 0.6rem 0.8rem;
+  min-height: 100%;
+  width: 100%;
+}
+
+.dash-header h1 {
+  font-size: 1.6rem;
+  margin: 0;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.cards-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.card-item {
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 88px;
+}
+
+.card-body {
+  text-align: center;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.95;
+}
+
+.card-value {
+  margin: 6px 0 0 0;
+  font-weight: 800;
+  font-size: 1.4rem;
+}
+
+/* controls row */
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.time-filters .pill {
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.time-filters .pill.active {
+  background: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+.cta .primary {
+  background: linear-gradient(90deg, #5fd07a, #2bb8ff);
+  color: white;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(43, 180, 120, 0.14);
+}
+
+/* main grid: chart + side ranking */
+.main-grid {
+  display: grid;
+  grid-template-columns: 4fr 0fr;
+  gap: 1.4rem;
+  align-items: start;
+}
+
+.chart-card,
+.summary-card {
+  background: white;
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: 0 10px 30px rgba(20, 20, 20, 0.06);
+}
+
+.chart-wrap {
+  height: 300px;
+  position: relative;
+}
+
+.summary-card h4 {
+  margin-top: 0;
+}
+
+.ranking {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ranking li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0.4rem;
+  border-radius: 10px;
+}
+
+.ranking li + li {
+  margin-top: 0.45rem;
+}
+
+.ranking .rank {
+  font-weight: 700;
+  color: #6b7280;
+  margin-right: 0.5rem;
+}
+
+.ranking .name {
+  flex: 1;
+  color: #111827;
+}
+
+.ranking .score {
+  font-weight: 700;
+  color: #374151;
+}
+
+.ranking li.you {
+  background: linear-gradient(
+    90deg,
+    rgba(111, 207, 116, 0.12),
+    rgba(43, 184, 255, 0.06)
+  );
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.02);
+}
+
+@media (max-width: 900px) {
+  .cards-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .main-grid {
+    grid-template-columns: 1fr;
+  }
+  .chart-wrap {
+    height: 260px;
+  }
+}

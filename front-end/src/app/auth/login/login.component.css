@@ -1,0 +1,105 @@
+/* Fundo gradiente suave */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(145deg, #b4e2c8, #a4d7f5);
+  font-family: "Poppins", sans-serif;
+  width: 100vw;
+}
+
+/* Caixa de login */
+.login-box {
+  background: #ffffffcc;
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 40px 50px;
+  width: 360px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo e título */
+.logo {
+  font-size: 28px;
+  color: #14532d;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+h2 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 25px;
+}
+
+/* Campos de entrada */
+.input-group {
+  position: relative;
+  margin-bottom: 18px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  background-color: #f9f9f9;
+}
+
+.senha-group i {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  cursor: pointer;
+  color: #777;
+  font-size: 18px;
+}
+
+/* Botão principal */
+.btn-login {
+  width: 100%;
+  background: linear-gradient(to right, #32cd32, #00bfff);
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 25px;
+  padding: 12px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.btn-login:hover {
+  transform: scale(1.03);
+}
+
+/* Links */
+.forgot-password {
+  display: block;
+  color: #007bff;
+  text-decoration: none;
+  font-size: 13px;
+  margin: 12px 0;
+}
+
+.signup-text {
+  font-size: 14px;
+  color: #555;
+  cursor: pointer;
+}
+
+.signup-link {
+  color: #007bff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.signup-link:hover {
+  text-decoration: underline;
+}

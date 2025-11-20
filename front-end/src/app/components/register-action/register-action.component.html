@@ -1,0 +1,46 @@
+<div class="page-container">
+    <h2 class="page-title">Registrar Ação Sustentável</h2>
+
+    <div class="form-card">
+
+        <form (ngSubmit)="registrarAcao()" #acaoForm="ngForm">
+
+            <div class="form-group">
+                <label for="titulo">Título da Ação</label>
+                <input type="text" id="titulo" name="titulo" [(ngModel)]="titulo" required>
+            </div>
+
+            <div class="form-group">
+                <label for="descricao">Descrição</label>
+                <textarea id="descricao" name="descricao" [(ngModel)]="descricao" rows="4" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Foto Comprobatória</label>
+
+                <div class="image-preview-container" *ngIf="preview">
+                    <img class="preview-image" [src]="preview" alt="previewimage" [style.width.px]="230"
+                        [style.height.px]="230" style="object-fit: cover; border-radius:12px;">
+
+                </div>
+                <div *ngIf="!preview" class="placeholder-img">
+                    <div class="placeholder-img">
+                        Foto da ação aparecerá aqui
+                    </div>
+                </div>
+
+
+                <label class="upload-btn">
+                    Selecionar Imagem
+                    <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden>
+                </label>
+            </div>
+
+            <button type="submit" class="btn-confirm" [disabled]="!acaoForm.form.valid">
+                Salvar Ação
+            </button>
+
+        </form>
+
+    </div>
+</div>

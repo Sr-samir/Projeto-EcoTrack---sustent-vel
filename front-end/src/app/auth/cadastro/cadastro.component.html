@@ -1,0 +1,31 @@
+<div class="register-container">
+  <div class="register-box">
+    <h1 class="logo"> EcoTrack</h1>
+    <h2>Junte-se ao EcoTrack</h2>
+
+    <form>
+      <input type="text" placeholder="Nome de Usuário" [(ngModel)]="nome" name="nomeUsuario" />
+      <input type="email" placeholder="Email" [(ngModel)]="email" name="email" />
+
+      <div class="password-group">
+        <input [type]="mostrarSenha ? 'text' : 'password'" placeholder="Senha" [(ngModel)]="senha" name="senha" />
+        <!-- <button type="button" (click)="toggleSenha()">👁️</button> -->
+      </div>
+
+      <div class="password-group">
+        <input [type]="mostrarConfirmarSenha ? 'text' : 'password'" placeholder="Confirmar Senha" [(ngModel)]="confirmarSenha" name="confirmarSenha" />
+        <!-- <button type="button" (click)="toggleConfirmarSenha()">👁️</button> -->
+      </div>
+
+      <div class="checkbox-group">
+        <input id="checkbox" type="checkbox" [(ngModel)]="aceitarTermos" name="aceitarTermos" />
+        <label>Li e aceito os <a href="#">Termos de Uso</a> e <a href="#">Política de Privacidade</a></label>
+      </div>
+
+      <button type="button" (click)="cadastrar()">Cadastrar</button>
+    </form>
+
+    <p>Já tem conta? <a routerLink="/login">Entrar</a></p>
+  </div>
+</div>
+
