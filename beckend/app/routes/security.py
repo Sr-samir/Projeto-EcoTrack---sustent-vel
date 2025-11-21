@@ -1,17 +1,17 @@
 from datetime import datetime, timedelta
 from jose import jwt, JWTError
 from fastapi import HTTPException, status, Depends
-from fastapi.security import oauth2
+from fastapi.security import OAuth2PasswordBearer
 
-from .token import decode_token, credentials_exception
-from .database import get_user_by_id  # Você implementa no Mongo
+
+from app.database import get_user_by_id  # Você implementa no Mongo
 
 SECRET_KEY = "SUA_CHAVE_SECRETA_AQUI"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 credentials_exception = HTTPException(
-    status_code=status.HTTP_401_UNAUTHORIZED,
+    status_code=status.HTTP_401_UNAUTHORIZED,       
     detail="Token inválido ou expirado.",
     headers={"WWW-Authenticate": "Bearer"},
 )
@@ -35,18 +35,21 @@ def decode_token(token: str):
 
 
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 
-async def get_current_user(token: str = Depends(oauth2 )):
+
+async def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
         payload = decode_token(token)
         user_id: str = payload.get("sub")
-        if user_id is None:
+
+        if not user_id:
             raise credentials_exception
-        
+
         user = await get_user_by_id(user_id)
         if not user:
             raise credentials_exception
-        
+
         return user
     except JWTError:
         raise credentials_exception

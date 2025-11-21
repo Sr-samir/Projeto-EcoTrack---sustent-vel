@@ -1,9 +1,8 @@
 from fastapi import APIRouter, HTTPException
-from app.database import db
-from app.models import Usuario, UsuarioLogin,Acao
+from app.database import db, ObjectId
+from app.models import Usuario, UsuarioLogin, Acao
 from fastapi import Depends
-from fastapi.security import OAuth2PasswordBearer
-from app.core.security import decode_token
+from app.routes.security import get_current_user, create_access_token
 
 
 
@@ -12,62 +11,73 @@ router = APIRouter( tags=["Usuarios"])
 #funçao que faz a login do usuario =>
 
 @router.post("/login")
-
-async def fazer_login(usuariologin:UsuarioLogin):
-    usuario_encontrado = await db.acao.find_one({"email":usuariologin.email})
-    if not usuario_encontrado:
-        raise HTTPException(status_code=404, detail= "usuario não encontrado")
-
-    if usuariologin.senha != usuario_encontrado["senha"]:
-        raise HTTPException(status_code=401, detail= " senha incorreta")
+async def fazer_login(usuariologin: UsuarioLogin):
+    usuario = await db.usuarios.find_one({"email": usuariologin.email})
     
-    return {
-        "success": True,
-        "message":"login efetuado com sucesso",
-        "usuario":{
-            "nome":usuario_encontrado.get("nome"),
-             "senha":usuario_encontrado.get("senha")
-        }
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
 
-        
+    if usuariologin.senha != usuario["senha"]:  # Depois vamos criptografar!
+        raise HTTPException(status_code=401, detail="Senha incorreta")
+
+    token = create_access_token({"sub": str(usuario["_id"])})
+
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "usuario": {
+            "nome": usuario.get("nome"),
+            "email": usuario.get("email")
+        }
     }
            
 
 #funçao que registra o usuario =>
 
 @router.post("/register")
+async def criar_usuario(usuario: Usuario):
+    usuario_existente = await db.usuarios.find_one({"email": usuario.email})
 
-async def criar_usuario(usuario: Usuario) :
-    usuario_existente = await db.acao.find_one({"email":usuario.email})
     if usuario_existente:
         raise HTTPException(status_code=400, detail="E-mail já cadastrado.")
-     
-    usuario_dict = usuario.dict(exclude_unset=True)   
-    resultado = await db.acao.insert_one(usuario_dict) 
+
+    usuario_dict = usuario.dict()
+    resultado = await db.usuarios.insert_one(usuario_dict)
 
     usuario_dict["_id"] = str(resultado.inserted_id)
+    del usuario_dict["senha"]  # Segurança!
+
     return {
         "success": True,
         "message": "Usuário criado com sucesso!",
         "usuario": usuario_dict
     }
-    
 
 #lista açoes do usuario logado com jwt =>
 
-oauth2 = OAuth2PasswordBearer(tokenUrl="auth/login")
 
-@router.get("/acao/minhas")
-async def listar_acoes(token: str = Depends(oauth2)):
-    user_id = decode_token(token)["sub"]
-    
-    cursor = db.acao.find({"usuario_id": user_id})
-    acao = []
+
+@router.get("/acoes/minhas")
+async def listar_acoes_usuario(current_user: dict = Depends(get_current_user)):
+    user_id = str(current_user["_id"])  # string mesmo
+
+    cursor = db.Acao.find({"usuario_id": user_id})  # compara com string
+    acoes = []
+
     async for a in cursor:
         a["_id"] = str(a["_id"])
-        acao.append(a)
-    
-    return acao
+        usuario = await db.usuarios.find_one({"_id": ObjectId(user_id)})
+        acoes.append({
+            "dia": a.get("dia", "N/A"),
+            "pontos": a.get("pontos", 10),
+            "media": a.get("media", 0),
+            "usuario_nome": usuario.get("nome") if usuario else "Desconhecido"
+        })
+
+    return acoes
+
+
+
 
 
 

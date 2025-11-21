@@ -34,25 +34,37 @@ export class RegisterActionComponent {
 }
 
   registrarAcao() {
-    if (!this.titulo || !this.descricao || !this.file) {
-      alert('Preencha todos os campos e selecione uma imagem!');
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('titulo', this.titulo);
-    formData.append('descricao', this.descricao);
-    formData.append('imagem', this.file);
-
-    this.http.post('http://localhost:8000/actions/', formData).subscribe({
-      next: () => {
-        alert('Ação registrada com sucesso!');
-        this.router.navigate(['/dashboard']);
-      },
-      error: (err) => {
-        console.error(err);
-        alert('Ocorreu um erro ao registrar a ação!');
-      },
-    });
+  if (!this.titulo || !this.descricao || !this.file) {
+    alert('Preencha todos os campos e selecione uma imagem!');
+    return;
   }
+
+  const formData = new FormData();
+  formData.append('titulo', this.titulo);
+  formData.append('descricao', this.descricao);
+  formData.append('imagem', this.file);
+
+  // pegar o token do localStorage
+  const token = localStorage.getItem('token');
+  if (!token) {
+    alert('Você precisa estar logado!');
+    return;
+  }
+
+  this.http.post('http://localhost:8000/actions/', formData, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }).subscribe({
+    next: () => {
+      alert('Ação registrada com sucesso!');
+      this.router.navigate(['/dashboard']);
+    },
+    error: (err) => {
+      console.error(err);
+      alert('Ocorreu um erro ao registrar a ação!');
+     }
+  });
 }
+}
+
