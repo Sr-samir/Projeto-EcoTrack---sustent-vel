@@ -1,10 +1,11 @@
 import { DashboardComponent } from './components/dashboard/dashboard/dashboard.component';
 import { MainLayoutComponent } from './layout/main-layout/main-layout/main-layout.component';
-import { Routes} from '@angular/router';
+import { Routes, CanActivate } from '@angular/router';
 import { LoginComponent } from './auth/login/login.component';
 import { CadastroComponent } from './auth/cadastro/cadastro.component';
 import { ProfileComponent } from './components/profile/profile/profile.component';
 import { RegisterActionComponent } from './components/register-action/register-action.component';
+import { GuardAuthService } from './core/guards/guard.auth.service';
 
 export const routes: Routes = [
   {
@@ -23,6 +24,7 @@ export const routes: Routes = [
   {
     path: '', 
     component: MainLayoutComponent,
+    canActivate: [GuardAuthService],
     children:[
       {path: 'dashboard', component: DashboardComponent},
       {path: 'Profile', component: ProfileComponent},

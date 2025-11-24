@@ -49,12 +49,15 @@
 }
 
 /* controls row */
-.controls {
+/* .controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-}
+  
+
+  
+} */
 
 .time-filters .pill {
   background: transparent;
@@ -72,15 +75,19 @@
 }
 
 .cta .primary {
-  background: linear-gradient(90deg, #5fd07a, #2bb8ff);
+  background: linear-gradient(120deg, #5fd07a, #2bb8ff);
   color: white;
   border: none;
   padding: 0.6rem 1rem;
   border-radius: 999px;
   cursor: pointer;
   box-shadow: 0 6px 18px rgba(43, 180, 120, 0.14);
+  transition: 0.2s ease;
 }
 
+.primary:hover {
+  padding: 3rem;
+}
 /* main grid: chart + side ranking */
 .main-grid {
   display: grid;
