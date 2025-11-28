@@ -66,7 +66,7 @@ textarea:focus {
   font-size: 15px;
 }
 
-.prewie-image  #image{
+.prewie-image #image {
   max-width: 100px; /* ajuste como gostar */
   max-height: 40%;
   object-fit: cover; /* impede distorção */
@@ -83,7 +83,7 @@ textarea:focus {
   }
 }
 .upload-btn {
-  background: #2ecc71;
+  background: #2ecc7098;
   color: #fff;
   padding: 10px;
   border-radius: 10px;
@@ -92,8 +92,12 @@ textarea:focus {
   width: fit-content;
   font-size: 14px;
   text-align: center;
+  transition: 0.2s ease;
 }
 
+.upload-btn:hover {
+  background-color: #20b35d;
+}
 /* Botão principal */
 .btn-confirm {
   width: 100%;
@@ -102,7 +106,7 @@ textarea:focus {
   color: #fff;
   font-weight: bold;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 16px;
   margin-top: 10px;
@@ -112,3 +116,40 @@ textarea:focus {
   background: #8fb59a;
   cursor: not-allowed;
 }
+
+.type-actions {
+  display: flex;
+}
+
+.list-actions {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+
+.list-actions li {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  background: #2ecc7098;
+  border-radius: 12px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  width: 100%;
+  transition: transform 0.2 ease;
+}
+
+.list-actions li:hover {
+  background-color: #2ecc71;
+}
+
+.list-actions li.selected {
+
+   background-color: #2ecc71;
+}
+

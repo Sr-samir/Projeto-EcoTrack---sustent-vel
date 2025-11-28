@@ -1,34 +1,28 @@
 <div class="login-container">
   <div class="login-box">
+    <div *ngIf="errorMessage" class="error-box">
+      <div class="error-header">
+        <span>⚠️ Atenção</span>
+        <button type="button" class="error-close" (click)="fecharErro()">×</button>
+      </div>
+      <p>{{ errorMessage }}</p>
+    </div>
     <h1 class="logo">
       <i class="bi bi-leaf"></i> EcoTrack
     </h1>
     <h2>Bem-vindo(a) de Volta!</h2>
 
+
+
     <form (ngSubmit)="login()">
       <div class="input-group">
-        <input
-          type="text"
-          placeholder="Email"
-          [(ngModel)]="email"
-          name="email"
-          required
-        />
+        <input type="text" placeholder="Email" [(ngModel)]="email" name="email" required />
       </div>
 
       <div class="input-group senha-group">
-        <input
-          [type]="mostrarSenha ? 'text' : 'password'"
-          placeholder="Senha"
-          [(ngModel)]="senha"
-          name="senha"
-          required
-        />
-        <i
-          class="bi"
-          [ngClass]="mostrarSenha ? 'bi-eye-slash' : 'bi-eye'"
-          (click)="toggleSenha()"
-        ></i>
+        <input [type]="mostrarSenha ? 'text' : 'password'" placeholder="Senha" [(ngModel)]="senha" name="senha"
+          required />
+        <i class="bi" [ngClass]="mostrarSenha ? 'bi-eye-slash' : 'bi-eye'" (click)="toggleSenha()"></i>
       </div>
 
       <button type="submit" class="btn-login">Entrar</button>

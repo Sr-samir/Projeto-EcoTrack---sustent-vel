@@ -91,7 +91,7 @@
 /* main grid: chart + side ranking */
 .main-grid {
   display: grid;
-  grid-template-columns: 4fr 0fr;
+  grid-template-columns: 2fr 2fr;
   gap: 1.4rem;
   align-items: start;
 }

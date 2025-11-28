@@ -26,7 +26,8 @@ export class ProfileComponent implements OnInit {
   }
 
   loadUserData() {
-    this.usuarioService.getUserProfile().subscribe({
+    this.usuarioService.loadUserProfile()
+.subscribe({
       next: (res: any) => {
         if (res) {
           this.nome = res.nome;

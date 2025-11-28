@@ -10,10 +10,16 @@ router = APIRouter(prefix="/actions", tags=["Ações"])
 async def registrar_acao(
     titulo: str = Form(...),
     descricao: str = Form(...),
+    tipo_acao: str = Form(...),      # 👈 NOVO CAMPO
     imagem: UploadFile = File(...),
     current_user: dict = Depends(get_current_user)
 ):
     try:
+        # (opcional) validação das opções
+        opcoes_validas = ["Reciclagem", "Plantação", "Compostagem"]
+        if tipo_acao not in opcoes_validas:
+            raise HTTPException(status_code=400, detail="Tipo de ação inválido.")
+
         # Salvar imagem no GridFS
         file_id = await bucket.upload_from_stream(
             imagem.filename,
@@ -23,22 +29,22 @@ async def registrar_acao(
 
         # Salvar dados da ação
         nova_acao = {
-               "titulo": titulo,
-               "descricao": descricao,
-               "imagem_id": file_id,
-               "usuario_id": str(current_user["_id"]),
-               "usuario_nome": current_user["nome"],
-               "dia": datetime.utcnow().day,
-               "pontos": 10
+            "titulo": titulo,
+            "descricao": descricao,
+            "tipo_acao": tipo_acao,                    # 👈 SALVANDO NO BANCO
+            "imagem_id": file_id,
+            "usuario_id": str(current_user["_id"]),
+            "usuario_nome": current_user["nome"],
+            "dia": datetime.utcnow().day,
+            "pontos": 10,
+            "criado_em": datetime.utcnow(),            # (opcional, mas útil)
         }
 
-        result = await db.acoes.insert_one(nova_acao)
+        result = await db.Acao.insert_one(nova_acao)
 
         return JSONResponse({
             "message": "Ação registrada com sucesso!",
             "acao_id": str(result.inserted_id),
-            # "imagem_id": str(file_id),
-            # "usuario_nome": current_user["nome"]
         })
 
     except Exception as e:
