@@ -38,3 +38,17 @@ li:hover,
   background-color: #2ecc71;
   color: #1e1e1e;
 }
+
+
+button{ 
+   width: 100%;
+  padding: 12px;
+  background: #2ecc71;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}

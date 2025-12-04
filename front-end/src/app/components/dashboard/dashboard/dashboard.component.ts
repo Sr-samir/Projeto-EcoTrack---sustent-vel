@@ -22,6 +22,14 @@ export class DashboardComponent {
     { title: 'CO₂ resgatado', value: 245, icon: 'bi bi-tree', color: '#000080' },
   ];
 
+  // lista de ações do usuário (usada no gráfico e em “Minhas Ações”)
+  acoesUsuario: { dia: number; pontos: number; media: number }[] = [];
+
+  // lista de ações do usuário para a LISTAGEM (cards)
+  acoesListagem: { tipo: string; dia: number | string; pontos: number }[] = [];
+
+  mostrarMinhasAcoes = false;
+
   public lineChartData: ChartConfiguration<'line'>['data'] = {
     labels: [],
     datasets: [
@@ -60,39 +68,82 @@ export class DashboardComponent {
     ],
   };
 
-//   public lineChartOptions: ChartOptions<'line'> = {
-//     responsive: true,
-//     maintainAspectRatio: false,
-//     plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
-//     scales: {
-//       x: { grid: { display: false }, ticks: { color: '#6b7280' } },
-//       y: { grid: { color: 'rgba(200,200,200,0.12)' }, ticks: { color: '#6b7280' }, beginAtZero: true },
-//     },
-//   };
+  public lineChartOptions: ChartOptions<'line'> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { mode: 'index', intersect: false },
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: '#6b7280' } },
+      y: {
+        grid: { color: 'rgba(200,200,200,0.12)' },
+        ticks: { color: '#6b7280' },
+        beginAtZero: true,
+      },
+    },
+  };
 
-//   public lineChartType: any = 'line';
+  public lineChartType: any = 'line';
 
-//   constructor(private acoesService: AcoesService) {
-//     // buscar os dados do backend assim que o componente for criado
-//     this.acoesService.getAcoesUsuario().subscribe((acoes: any[]) => {
-//       console.log('Dados recebidos do backend:', acoes);
+  constructor(private acoesService: AcoesService) {
+    // 🔹 1) DADOS FAKE para o GRÁFICO (não mexe no que aparece)
+    const acoesFake = [
+      { dia: 26, pontos: 10, media: 8 },
+      { dia: 28, pontos: 18, media: 12 },
+      { dia: 30, pontos: 25, media: 15 },
+      { dia: 1, pontos: 20, media: 17 },
+    ];
 
-//       if (acoes.length > 0) {
-//         // Cria um novo objeto para disparar a detecção de mudanças
-//         this.lineChartData = {
-//           labels: acoes.map(a => a.dia.toString()),
-//           datasets: [
-//             {
-//               ...this.lineChartData.datasets[0],
-//               data: acoes.map(a => a.pontos),
-//             },
-//             {
-//               ...this.lineChartData.datasets[1],
-//               data: acoes.map(a => a.media || 0),
-//             },
-//           ],
-//         };
-//       }
-//     });
-//   }
+    this.acoesUsuario = acoesFake;
+
+    this.lineChartData = {
+      labels: acoesFake.map((a) => `Dia ${a.dia}`),
+      datasets: [
+        { ...this.lineChartData.datasets[0], data: acoesFake.map((a) => a.pontos) },
+        { ...this.lineChartData.datasets[1], data: acoesFake.map((a) => a.media) },
+      ],
+    };
+
+    // 🔹 DADOS para a LISTAGEM cards “Minhas Ações”
+    this.acoesService.getAcoesUsuario().subscribe((acoes: any[]) => {
+      console.log('Dados da listagem:', acoes);
+
+      this.acoesListagem = acoes.map((a) => ({
+        tipo: a.tipo_acao ?? 'Ação',
+        dia: this.formatarData(a.dia),  // Agora converte corretamente
+        pontos: a.pontos ?? 0,
+      }));
+    });
+  }
+
+  formatarData(dia: number | string): string {
+  let data: Date;
+
+  // Se for um número (dia do mês)
+  if (typeof dia === 'number') {
+    const ano = new Date().getFullYear();  // Ano atual
+    const mes = new Date().getMonth();  // Mês atual
+    data = new Date(ano, mes, dia);  // Cria uma data com o dia
+  } 
+  // Se for uma string (data completa)
+  else if (typeof dia === 'string') {
+    data = new Date(dia);  // Converte para Date
+  } 
+  // Caso não seja válido, coloca um fallback
+  else {
+    return 'Data inválida';
+  }
+
+  // Ajuste para o fuso horário local
+  const localDate = new Date(data.getTime() - data.getTimezoneOffset() * 60000); // Converte para o horário local
+
+  return `${localDate.getDate().toString().padStart(2, '0')}/${(localDate.getMonth() + 1).toString().padStart(2, '0')}/${localDate.getFullYear()}`;
+}
+
+
+  toggleMinhasAcoes() {
+    this.mostrarMinhasAcoes = !this.mostrarMinhasAcoes;
+  }
 }

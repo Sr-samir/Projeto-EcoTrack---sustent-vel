@@ -80,6 +80,7 @@ async def listar_acoes_usuario(current_user: dict = Depends(get_current_user)):
         a["_id"] = str(a["_id"])
         usuario = await db.usuarios.find_one({"_id": ObjectId(user_id)})
         acoes.append({
+            "tipo_acao": a.get("tipo_acao", "Tipo desconhecido"),
             "dia": a.get("dia", "N/A"),
             "pontos": a.get("pontos", 10),
             "media": a.get("media", 0),

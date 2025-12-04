@@ -31,11 +31,11 @@ async def registrar_acao(
         nova_acao = {
             "titulo": titulo,
             "descricao": descricao,
-            "tipo_acao": tipo_acao,                    # 👈 SALVANDO NO BANCO
+            "tipo_acao": tipo_acao,                    
             "imagem_id": file_id,
             "usuario_id": str(current_user["_id"]),
             "usuario_nome": current_user["nome"],
-            "dia": datetime.utcnow().day,
+            "dia":datetime.utcnow(),
             "pontos": 10,
             "criado_em": datetime.utcnow(),            # (opcional, mas útil)
         }
