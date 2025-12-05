@@ -45,6 +45,6 @@
     "typescript": "~5.4.2"
   }, 
    "overrides": {
-    "@angular/cdk": "17.3.12"        // 👈 força o npm a usar essa versão
+    "@angular/cdk": "17.3.12"        
   }
 }
