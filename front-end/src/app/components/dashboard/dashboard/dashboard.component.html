@@ -14,13 +14,10 @@
   </section>
 
   <section class="controls">
-    <!-- <div class="time-filters">
-      <button class="pill active">7 dias</button>
-      <button class="pill">30 dias</button>
-      <button class="pill">6 meses</button>
-    </div> -->
     <div class="cta">
-      <button routerLink="/action" class="primary">Registre sua Próxima Ação Sustentável</button>
+      <button routerLink="/action" class="primary">
+        Registre sua Próxima Ação Sustentável
+      </button>
     </div>
   </section>
 
@@ -28,46 +25,40 @@
     <div class="chart-card">
       <h3>Evolução Semanal</h3>
       <div class="chart-wrap">
-        <canvas id="lineChart" baseChart [data]="lineChartData" [options]="lineChartOptions" [type]="lineChartType">
-        </canvas>
+
+        <!-- ✅ GRÁFICO AJUSTADO (Chart.js puro) -->
+        <canvas #lineCanvas></canvas>
+
       </div>
     </div>
 
-   <div class="minhas-acoes-card">
-  <div class="minhas-acoes-header">
-    <h3>Minhas Ações</h3>
-    <button class="btn-minhas-acoes" (click)="toggleMinhasAcoes()">
-      {{ mostrarMinhasAcoes ? 'Ocultar' : 'Visualizar' }}
-    </button>
-  </div>
+    <div class="minhas-acoes-card">
+      <div class="minhas-acoes-header">
+        <h3>Minhas Ações</h3>
+        <button class="btn-minhas-acoes" (click)="toggleMinhasAcoes()">
+          {{ mostrarMinhasAcoes ? 'Ocultar' : 'Visualizar' }}
+        </button>
+      </div>
 
-  <div *ngIf="mostrarMinhasAcoes" class="lista-minhas-acoes">
-    <ng-container *ngIf="acoesListagem.length > 0; else semAcoes">
-      <table class="acoes-table">
-        <thead>
-          <tr>
-            <th>Dia</th>
-            <th>Tipo de Ação</th>
-            <th>Pontos</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let acao of acoesListagem">
-            <td>{{ acao.dia }}</td>
-            <td>{{ acao.tipo }}</td>
-            <td>{{ acao.pontos }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </ng-container>
+      <div *ngIf="mostrarMinhasAcoes" class="lista-minhas-acoes">
+        <ng-container *ngIf="acoesListagem.length > 0; else semAcoes">
+          <table class="acoes-table">
+            <thead>
+              <tr>
+                <th>Dia</th>
+                <th>Tipo de Ação</th>
+                <th>Pontos</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let acao of acoesListagem">
+                <td>{{ acao.dia }}</td>
+                <td>{{ acao.tipo }}</td>
+                <td>{{ acao.pontos }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </ng-container>
 
-    <ng-template #semAcoes>
-      <p class="sem-acoes-texto">Você ainda não registrou nenhuma ação.</p>
-    </ng-template>
-  </div>
-</div>
-
-
-
-  </section>
-</div>
+        <ng-template #semAcoes>
+          <
