@@ -43,5 +43,8 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "typescript": "~5.4.2"
+  }, 
+   "overrides": {
+    "@angular/cdk": "17.3.12"        // 👈 força o npm a usar essa versão
   }
 }
