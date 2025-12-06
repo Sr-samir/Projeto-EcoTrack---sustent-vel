@@ -5,12 +5,8 @@ from pymongo import ASCENDING
 from bson import ObjectId
 from passlib.context import CryptContext
 
-# Lê do ambiente. Exemplos:
-# - Local: MONGO_URL=mongodb://127.0.0.1:27017
-# - Docker (compose com serviço "mongo"): MONGO_URL=mongodb://mongo:27017
-MONGO_URL = os.getenv("MONGO_URL", "mongodb://mongo:27017")
-
-# Também pode configurar por env, senão usa "ecotrack"
+# 👉 Se não tiver MONGO_URL no ambiente, usa localhost:27017
+MONGO_URL = os.getenv("MONGO_URL", "mongodb://127.0.0.1:27017")
 DATABASE_NAME = os.getenv("MONGO_DB_NAME", "ecotrack")
 
 client: AsyncIOMotorClient | None = None
@@ -23,7 +19,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 async def iniciar_banco():
     """
     Inicializa a conexão com o MongoDB e cria índices necessários.
-    É chamada no evento de startup do FastAPI.
+    Chamada no evento de startup do FastAPI.
     """
     global client, db, bucket
 
@@ -40,7 +36,7 @@ async def iniciar_banco():
         print(f"✅ Conectado ao MongoDB. Banco: {DATABASE_NAME}")
     except Exception as e:
         print("❌ Erro ao conectar no MongoDB:", repr(e))
-        # Se der erro aqui, o FastAPI falha no startup (como deve ser)
+        # Deixa o FastAPI falhar no startup (com erro claro)
         raise
 
     # Cria índice único no email dos usuários
