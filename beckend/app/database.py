@@ -1,10 +1,17 @@
+import os
+
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorGridFSBucket
 from pymongo import ASCENDING
 from bson import ObjectId
 from passlib.context import CryptContext
 
-MONGO_URL = "mongodb://127.0.0.1:27017"
-DATABASE_NAME = "ecotrack"
+# Lê do ambiente. Exemplos:
+# - Local: MONGO_URL=mongodb://127.0.0.1:27017
+# - Docker (compose com serviço "mongo"): MONGO_URL=mongodb://mongo:27017
+MONGO_URL = os.getenv("MONGO_URL", "mongodb://mongo:27017")
+
+# Também pode configurar por env, senão usa "ecotrack"
+DATABASE_NAME = os.getenv("MONGO_DB_NAME", "ecotrack")
 
 client: AsyncIOMotorClient | None = None
 db = None
@@ -15,30 +22,30 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 async def iniciar_banco():
     """
-    Inicializa a conexão com o MongoDB e cria índices.
-    Se não conseguir conectar, levanta erro rápido.
+    Inicializa a conexão com o MongoDB e cria índices necessários.
+    É chamada no evento de startup do FastAPI.
     """
     global client, db, bucket
 
-    print("Iniciando conexão com MongoDB...")
+    print(f"Iniciando conexão com MongoDB em: {MONGO_URL!r}")
 
-    # timeout de 5 segundos pra seleção do servidor
+    # Timeout de seleção de servidor: 5 segundos
     client = AsyncIOMotorClient(MONGO_URL, serverSelectionTimeoutMS=5000)
     db = client[DATABASE_NAME]
     bucket = AsyncIOMotorGridFSBucket(db)
 
-    # Testa conexão com um ping
+    # Testa conexão
     try:
         await db.command("ping")
-        print("Conectado ao MongoDB com sucesso.")
+        print(f"✅ Conectado ao MongoDB. Banco: {DATABASE_NAME}")
     except Exception as e:
         print("❌ Erro ao conectar no MongoDB:", repr(e))
-        # re-levanta o erro pra FastAPI falhar no startup e logar o stack trace
+        # Se der erro aqui, o FastAPI falha no startup (como deve ser)
         raise
 
-    # Se passou do ping, cria o índice
+    # Cria índice único no email dos usuários
     await db.usuarios.create_index([("email", ASCENDING)], unique=True)
-    print("Índice de email criado em 'usuarios'. Banco pronto.")
+    print("✅ Índice único em 'email' criado na coleção 'usuarios'.")
 
 
 async def get_user_by_email(email: str):
