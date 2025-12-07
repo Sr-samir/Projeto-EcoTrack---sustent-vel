@@ -5,8 +5,18 @@ from pymongo import ASCENDING
 from bson import ObjectId
 from passlib.context import CryptContext
 
-# 👉 Se não tiver MONGO_URL no ambiente, usa localhost:27017
-MONGO_URL = os.getenv("MONGO_URL", "mongodb://127.0.0.1:27017")
+# -------------------------------------------------------------------
+# Configuração da URI do MongoDB
+# Railway usa MONGO_URI
+# Local pode usar MONGO_URL
+# Se nenhum existir → localhost
+# -------------------------------------------------------------------
+MONGO_URI = (
+    os.getenv("MONGO_URI") 
+    or os.getenv("MONGO_URL") 
+    or "mongodb://127.0.0.1:27017"
+)
+
 DATABASE_NAME = os.getenv("MONGO_DB_NAME", "ecotrack")
 
 client: AsyncIOMotorClient | None = None
@@ -23,10 +33,10 @@ async def iniciar_banco():
     """
     global client, db, bucket
 
-    print(f"Iniciando conexão com MongoDB em: {MONGO_URL!r}")
+    print(f"Iniciando conexão com MongoDB em: {MONGO_URI!r}")
 
-    # Timeout de seleção de servidor: 5 segundos
-    client = AsyncIOMotorClient(MONGO_URL, serverSelectionTimeoutMS=5000)
+    # Timeout de 5 segundos para tentar conectar
+    client = AsyncIOMotorClient(MONGO_URI, serverSelectionTimeoutMS=5000)
     db = client[DATABASE_NAME]
     bucket = AsyncIOMotorGridFSBucket(db)
 
@@ -36,12 +46,11 @@ async def iniciar_banco():
         print(f"✅ Conectado ao MongoDB. Banco: {DATABASE_NAME}")
     except Exception as e:
         print("❌ Erro ao conectar no MongoDB:", repr(e))
-        # Deixa o FastAPI falhar no startup (com erro claro)
         raise
 
-    # Cria índice único no email dos usuários
+    # Cria índice único para e-mail dos usuários
     await db.usuarios.create_index([("email", ASCENDING)], unique=True)
-    print("✅ Índice único em 'email' criado na coleção 'usuarios'.")
+    print("✅ Índice único em 'email' criado com sucesso.")
 
 
 async def get_user_by_email(email: str):
