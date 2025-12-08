@@ -8,7 +8,9 @@ import { tap } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class UsuarioService {
-  private baseUrl = 'http://127.0.0.1:8000';
+  private baseUrl = window.location.hostname === 'localhost'
+    ? 'http://127.0.0.1:8000'
+    : 'https://projeto-ecotrack-sustent-vel-production.up.railway.app';
 
   // guarda o usuário atual
   private currentUserSubject = new BehaviorSubject<any | null>(null);
