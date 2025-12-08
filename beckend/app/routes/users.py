@@ -36,32 +36,27 @@ async def fazer_login(usuariologin: UsuarioLogin):
 
 
 @router.post("/register")
-async def criar_usuario(usuario: Usuario):
+async def criar_usuario(usuario: dict):
     # Verifica se o e-mail já existe
-    usuario_existente = await db.usuarios.find_one({"email": usuario.email})
+    usuario_existente = await db.usuarios.find_one({"email": usuario["email"]})
     if usuario_existente:
         raise HTTPException(status_code=400, detail="E-mail já cadastrado.")
 
-    usuario_dict = usuario.dict()
-
-    # Garante que a senha não passe do limite do bcrypt (72 bytes)
-    senha_limpa = usuario_dict["senha"]
+    senha_limpa = usuario["senha"]
     if len(senha_limpa) > 72:
         senha_limpa = senha_limpa[:72]
 
-    # Hash da senha corrigido
-    usuario_dict["senha"] = pwd_context.hash(senha_limpa)
+    usuario["senha"] = pwd_context.hash(senha_limpa)
 
-    # Inserir usuário no banco
-    resultado = await db.usuarios.insert_one(usuario_dict)
+    resultado = await db.usuarios.insert_one(usuario)
 
-    usuario_dict["_id"] = str(resultado.inserted_id)
-    del usuario_dict["senha"]  # Nunca retornar a senha!
+    usuario["_id"] = str(resultado.inserted_id)
+    del usuario["senha"]
 
     return {
         "success": True,
         "message": "Usuário criado com sucesso!",
-        "usuario": usuario_dict
+        "usuario": usuario
     }
 
 
