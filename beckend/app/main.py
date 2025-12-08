@@ -6,21 +6,21 @@ from app.database import iniciar_banco
 
 app = FastAPI(title="Ecotrack API")
 
-# ✅ ORIGENS PERMITIDAS (PRODUÇÃO + LOCAL)
+# ✅ DOMÍNIOS PERMITIDOS
 origins = [
-    "http://localhost:4200",                 # Angular local
-    "https://myecotrack.vercel.app",         # ✅ SEU FRONTEND EM PRODUÇÃO
+    "http://localhost:4200",          # Angular local
+    "https://myecotrack.vercel.app",  # Frontend em produção (Vercel)
 ]
 
+# ✅ CORS CONFIGURADO CORRETAMENTE
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,   # ❌ NÃO use mais ["*"]
+    allow_origins=origins,   # ⚠️ NÃO use "*" em produção com credentials=True
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["*"],    # POST, GET, PUT, DELETE, OPTIONS
     allow_headers=["*"],
 )
 
-# ✅ INICIALIZAÇÃO DO BANCO
 @app.on_event("startup")
 async def startup_event():
     await iniciar_banco()
@@ -29,7 +29,6 @@ async def startup_event():
 app.include_router(users.router)
 app.include_router(actions.router)
 
-# ✅ ROTA TESTE
 @app.get("/")
 def read_root():
     return {"mensagem": "API Ecotrack online"}
