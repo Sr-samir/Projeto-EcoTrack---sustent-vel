@@ -6,7 +6,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AcoesService {
-  private baseUrl = 'http://127.0.0.1:8000';
+  private baseUrl = window.location.hostname === 'localhost'
+      ? 'http://127.0.0.1:8000'
+      : 'https://projeto-ecotrack-sustent-vel-production.up.railway.app';
 
   constructor(private http: HttpClient) {}
 
