@@ -37,34 +37,32 @@ async def fazer_login(usuariologin: UsuarioLogin):
 
 @router.post("/register")
 async def criar_usuario(usuario: Usuario):
-    try:
-        usuario_existente = await db.usuarios.find_one({"email": usuario.email})
-        if usuario_existente:
-            raise HTTPException(status_code=400, detail="E-mail já cadastrado.")
+    # Verifica se o e-mail já existe
+    usuario_existente = await db.usuarios.find_one({"email": usuario.email})
+    if usuario_existente:
+        raise HTTPException(status_code=400, detail="E-mail já cadastrado.")
 
-        usuario_dict = usuario.dict()
+    usuario_dict = usuario.dict()
 
-        senha_limpa = usuario_dict["senha"]
-        if len(senha_limpa) > 72:
-            senha_limpa = senha_limpa[:72]
+    # Garante que a senha não passe do limite do bcrypt (72 bytes)
+    senha_limpa = usuario_dict["senha"]
+    if len(senha_limpa) > 72:
+        senha_limpa = senha_limpa[:72]
 
-        usuario_dict["senha"] = pwd_context.hash(senha_limpa)
+    # Hash da senha corrigido
+    usuario_dict["senha"] = pwd_context.hash(senha_limpa)
 
-        resultado = await db.usuarios.insert_one(usuario_dict)
+    # Inserir usuário no banco
+    resultado = await db.usuarios.insert_one(usuario_dict)
 
-        usuario_dict["_id"] = str(resultado.inserted_id)
-        del usuario_dict["senha"]
+    usuario_dict["_id"] = str(resultado.inserted_id)
+    del usuario_dict["senha"]  # Nunca retornar a senha!
 
-        return {
-            "success": True,
-            "message": "Usuário criado com sucesso!",
-            "usuario": usuario_dict
-        }
-
-    except Exception as e:
-        print("❌ ERRO NO REGISTER:", str(e))
-        raise HTTPException(status_code=500, detail="Erro interno no servidor")
-
+    return {
+        "success": True,
+        "message": "Usuário criado com sucesso!",
+        "usuario": usuario_dict
+    }
 
 
 #lista açoes do usuario logado com jwt =>
