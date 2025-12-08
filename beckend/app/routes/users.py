@@ -1,17 +1,16 @@
-from fastapi import APIRouter, HTTPException
-from app.database import db, ObjectId, pwd_context
+from fastapi import APIRouter, HTTPException, Depends
+from app import database  # 👈 importa o módulo, não o db direto
+from app.database import ObjectId, pwd_context
 from app.models import Usuario, UsuarioLogin, Acao, UpdatePassword, UpdateProfile
-from fastapi import Depends
 from app.routes.security import get_current_user, create_access_token
 
+router = APIRouter(tags=["Usuarios"])
 
-router = APIRouter( tags=["Usuarios"])
-
-#funçao que faz a login do usuario =>
-
+# 👉 Login do usuário
 @router.post("/login")
 async def fazer_login(usuariologin: UsuarioLogin):
-    usuario = await db.usuarios.find_one({"email": usuariologin.email})
+    # usa database.db em vez de db
+    usuario = await database.db.usuarios.find_one({"email": usuariologin.email})
 
     if not usuario:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
@@ -26,123 +25,101 @@ async def fazer_login(usuariologin: UsuarioLogin):
         "token_type": "bearer",
         "usuario": {
             "nome": usuario.get("nome"),
-            "email": usuario.get("email")
-        }
+            "email": usuario.get("email"),
+        },
     }
 
-           
 
-#funçao que registra o usuario =>
-
-
+# 👉 Registro do usuário
 @router.post("/register")
 async def criar_usuario(usuario: Usuario):
     # Verifica se o e-mail já existe
-    usuario_existente = await db.usuarios.find_one({"email": usuario.email})
+    usuario_existente = await database.db.usuarios.find_one({"email": usuario.email})
     if usuario_existente:
         raise HTTPException(status_code=400, detail="E-mail já cadastrado.")
 
     usuario_dict = usuario.dict()
 
-    # Garante que a senha não passe do limite do bcrypt (72 bytes)
-    senha_limpa = usuario_dict["senha"]
+    # Garante que a senha não passe do limite do bcrypt (72 caracteres)
+    senha_limpa = str(usuario_dict["senha"])
     if len(senha_limpa) > 72:
         senha_limpa = senha_limpa[:72]
 
-    # Hash da senha corrigido
+    # Hash da senha
     usuario_dict["senha"] = pwd_context.hash(senha_limpa)
 
     # Inserir usuário no banco
-    resultado = await db.usuarios.insert_one(usuario_dict)
+    resultado = await database.db.usuarios.insert_one(usuario_dict)
 
     usuario_dict["_id"] = str(resultado.inserted_id)
-    del usuario_dict["senha"]  # Nunca retornar a senha!
+    usuario_dict.pop("senha", None)  # Nunca retornar a senha!
 
     return {
         "success": True,
         "message": "Usuário criado com sucesso!",
-        "usuario": usuario_dict
+        "usuario": usuario_dict,
     }
 
 
-#lista açoes do usuario logado com jwt =>
-
-
-
+# 👉 Listar ações do usuário logado
 @router.get("/acoes/minhas")
 async def listar_acoes_usuario(current_user: dict = Depends(get_current_user)):
     user_id = str(current_user["_id"])  # string mesmo
 
-    cursor = db.Acao.find({"usuario_id": user_id})  # compara com string
+    cursor = database.db.Acao.find({"usuario_id": user_id})  # compara com string
     acoes = []
 
     async for a in cursor:
         a["_id"] = str(a["_id"])
-        usuario = await db.usuarios.find_one({"_id": ObjectId(user_id)})
-        acoes.append({
-            "tipo_acao": a.get("tipo_acao", "Tipo desconhecido"),
-            "dia": a.get("dia", "N/A"),
-            "pontos": a.get("pontos", 10),
-            "media": a.get("media", 0),
-            "usuario_nome": usuario.get("nome") if usuario else "Desconhecido"
-        })
+        usuario = await database.db.usuarios.find_one({"_id": ObjectId(user_id)})
+        acoes.append(
+            {
+                "tipo_acao": a.get("tipo_acao", "Tipo desconhecido"),
+                "dia": a.get("dia", "N/A"),
+                "pontos": a.get("pontos", 10),
+                "media": a.get("media", 0),
+                "usuario_nome": usuario.get("nome") if usuario else "Desconhecido",
+            }
+        )
 
     return acoes
 
 
-
-
-#Alteração da senha =>
-
-
+# 👉 Alteração da senha
 @router.put("/usuario/senha")
-async def atualizar_senha(data: UpdatePassword, current_user: dict = Depends(get_current_user)):
-
+async def atualizar_senha(
+    data: UpdatePassword, current_user: dict = Depends(get_current_user)
+):
     if not pwd_context.verify(data.senha_atual, current_user["senha"]):
         raise HTTPException(status_code=400, detail="Senha atual incorreta")
 
     nova_hash = pwd_context.hash(data.nova_senha)
 
-    await db.usuarios.update_one(
+    await database.db.usuarios.update_one(
         {"_id": current_user["_id"]},
-        {"$set": {"senha": nova_hash}}
+        {"$set": {"senha": nova_hash}},
     )
 
     return {"message": "Senha atualizada com sucesso!"}
 
 
-
-#Atualização do nome e email =>
-
+# 👉 Atualização do nome e e-mail
 @router.put("/usuario/atualizar")
-async def atualizar_usuario(data: UpdateProfile, current_user: dict = Depends(get_current_user)):
+async def atualizar_usuario(
+    data: UpdateProfile, current_user: dict = Depends(get_current_user)
+):
     user_id = current_user["_id"]
 
-    await db.usuarios.update_one(
+    await database.db.usuarios.update_one(
         {"_id": user_id},
-        {"$set": {"nome": data.nome, "email": data.email}}
+        {"$set": {"nome": data.nome, "email": data.email}},
     )
 
     return {"message": "Dados atualizados com sucesso"}
 
 
-
-#endpoint para visualizar os dados no frontend =>
-
+# 👉 Endpoint para visualizar os dados no frontend
 @router.get("/usuario/me")
 async def get_usuario(current_user: dict = Depends(get_current_user)):
     current_user["_id"] = str(current_user["_id"])
     return current_user
-
-
-
-# @router.get("/ranking")
-# async def ranking():
-#     acao = []
-#     cursor = db.acao.find().sort('pontos', -1)
-#     async for u in cursor:
-#         u["_id"] = str(u["_id"])
-
-#         acao.append(u)
-
-#     return acao    
