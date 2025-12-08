@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './register-action.component.html',
-  styleUrls: ['./register-action.component.css'],
+  styleUrls: ['./register-action.component.css'], // <- ajustei para styleUrls
 })
 export class RegisterActionComponent {
   titulo: string = '';
@@ -17,14 +17,11 @@ export class RegisterActionComponent {
   file: File | null = null;
   preview: string | ArrayBuffer | null = null;
 
+  
   options: string[] = ['Reciclagem', 'Plantação', 'Compostagem'];
-  selectedOption: string | null = null;
 
-  // ✅ BASE URL DINÂMICA (LOCAL + PRODUÇÃO)
-  private baseUrl =
-    window.location.hostname === 'localhost'
-      ? 'http://127.0.0.1:8000'
-      : 'https://projeto-ecotrack-sustent-vel-production.up.railway.app';
+ 
+  selectedOption: string | null = null;
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -48,9 +45,7 @@ export class RegisterActionComponent {
 
   registrarAcao() {
     if (!this.titulo || !this.descricao || !this.file || !this.selectedOption) {
-      alert(
-        'Preencha todos os campos, selecione um tipo de ação e escolha uma imagem!'
-      );
+      alert('Preencha todos os campos, selecione um tipo de ação e escolha uma imagem!');
       return;
     }
 
@@ -62,3 +57,23 @@ export class RegisterActionComponent {
 
     const token = localStorage.getItem('token');
     if (!token) {
+      alert('Você precisa estar logado!');
+      return;
+    }
+
+    this.http.post('http://localhost:8000/actions/', formData, {
+      headers: {
+        Authorization: Bearer ${token},
+      },
+    }).subscribe({
+      next: () => {
+        alert('Ação registrada com sucesso!');
+        this.router.navigate(['/dashboard']);
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Ocorreu um erro ao registrar a ação!');
+      },
+    });
+  }
+}
