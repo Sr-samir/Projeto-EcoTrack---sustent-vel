@@ -20,7 +20,7 @@ export class RegisterActionComponent {
   options: string[] = ['Reciclagem', 'Plantação', 'Compostagem'];
   selectedOption: string | null = null;
 
-  // ✅ BASE URL DINÂMICA (LOCAL + PRODUÇÃO)
+  // ✅ BASE URL DINÂMICA (LOCAL + PRODUÇÃO
   private baseUrl =
     window.location.hostname === 'localhost'
       ? 'http://127.0.0.1:8000'
