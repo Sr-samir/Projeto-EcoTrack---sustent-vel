@@ -16,7 +16,7 @@ origins = [
 # ✅ CORS CONFIGURADO CORRETAMENTE
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,   # ⚠️ NÃO use "*" em produção com credentials=True
+    allow_origin_regex=r"https://myecotrack.*\.vercel\.app",   # ⚠️ NÃO use "*" em produção com credentials=True
     allow_credentials=True,
     allow_methods=["*"],    # POST, GET, PUT, DELETE, OPTION
     allow_headers=["*"],
