@@ -63,7 +63,7 @@ export class RegisterActionComponent {
 
     this.http.post('http://localhost:8000/actions/', formData, {
       headers: {
-        Authorization: Bearer ${token},
+        Authorization: `Bearer ${token}`,
       },
     }).subscribe({
       next: () => {
