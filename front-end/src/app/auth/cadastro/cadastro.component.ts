@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-RouterModule
+
 @Component({
   selector: 'app-cadastro',
   standalone: true,
@@ -31,12 +31,7 @@ export class CadastroComponent {
   }
 
   cadastrar() {
-    if (
-      !this.nome ||
-      !this.email ||
-      !this.senha ||
-      !this.confirmarSenha
-    ) {
+    if (!this.nome || !this.email || !this.senha || !this.confirmarSenha) {
       alert('Preencha todos os campos.');
       return;
     }
@@ -57,27 +52,24 @@ export class CadastroComponent {
       senha: this.senha,
     };
 
-    this.http.post('https://projeto-ecotrack-sustent-vel-production.up.railway.app/register
-/register', payload).subscribe({
-      next: (response: any) => {
-        if (response && response.success){
-          
-          alert('Cadastro realizado com sucesso!')
-          setTimeout (() =>{
-            this.router.navigate(['/login'])},2000
-          );
-        }
-        
-        
-      },
-      error: (err) => {
-        console.error('Erro no cadastro', err);
-        alert('Erro ao cadastrar. Tente novamente.');
-      },
-    });
+    this.http
+      .post(
+        'https://projeto-ecotrack-sustent-vel-production.up.railway.app/register',
+        payload
+      )
+      .subscribe({
+        next: (response: any) => {
+          if (response && response.success) {
+            alert('Cadastro realizado com sucesso!');
+            setTimeout(() => {
+              this.router.navigate(['/login']);
+            }, 2000);
+          }
+        },
+        error: (err) => {
+          console.error('Erro no cadastro', err);
+          alert('Erro ao cadastrar. Tente novamente.');
+        },
+      });
   }
-        
-        
-        
-        
 }
