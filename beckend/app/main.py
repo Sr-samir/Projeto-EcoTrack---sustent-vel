@@ -8,8 +8,9 @@ app = FastAPI(title="Ecotrack API")
 
 # ✅ DOMÍNIOS PERMITIDOS
 origins = [
-    "http://localhost:4200",          # Angular local
-    "https://myecotrack.vercel.app",  # Frontend em produção (Vercel)
+    "http://localhost:4200",
+    "https://myecotrack.vercel.app",
+    "https://myecotrack-git-master-sr-samirs-projects.vercel.app",  # ← esse é o que aparece no erro
 ]
 
 # ✅ CORS CONFIGURADO CORRETAMENTE
