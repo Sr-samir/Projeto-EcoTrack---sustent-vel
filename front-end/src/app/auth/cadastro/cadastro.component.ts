@@ -57,7 +57,7 @@ export class CadastroComponent {
       senha: this.senha,
     };
 
-    this.http.post('http://localhost:8000/register', payload).subscribe({
+    this.http.post('projeto-ecotrack-sustent-vel-production.up.railway.app/register', payload).subscribe({
       next: (response: any) => {
         if (response && response.success){
           
