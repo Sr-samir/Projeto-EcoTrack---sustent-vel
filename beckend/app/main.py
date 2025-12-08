@@ -6,15 +6,10 @@ from app.database import iniciar_banco
 
 app = FastAPI(title="Ecotrack API")
 
-# ✅ DOMÍNIOS PERMITIDOS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://myecotrack.vercel.app",
-        "https://myecotrack-git-master-sr-samirs-projects.vercel.app",
-        "http://localhost:4200",
-    ],
-    allow_credentials=True,   # se NÃO usar cookies, pode pôr False
+    allow_origins=["*"],          # <-- libera tudo (pra teste)
+    allow_credentials=False,      # <-- importante: False se usar "*"
     allow_methods=["*"],
     allow_headers=["*"],
 )
