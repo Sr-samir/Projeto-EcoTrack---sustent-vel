@@ -19,7 +19,7 @@ export class DashboardComponent implements AfterViewInit {
   @ViewChild('lineCanvas') lineCanvas!: ElementRef<HTMLCanvasElement>;
 
   public cards = [
-    { title: 'Pontuação Total', value: '120 pt', icon: 'bi bi-lightning-charge', color: '#2ecc71' },
+    { title: 'Pontuação Total', value: '120 pts', icon: 'bi bi-lightning-charge', color: '#2ecc71' },
     { title: 'Ações no mês', value: '35', icon: 'bi bi-cloud-check', color: '#3498db' },
     { title: 'Média semanal', value: '245 pts', icon: 'bi bi-star', color: '#f1c40f' },
     { title: 'CO₂ resgatado', value: 245, icon: 'bi bi-tree', color: '#000080' },
