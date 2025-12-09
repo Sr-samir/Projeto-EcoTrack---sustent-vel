@@ -94,6 +94,11 @@ Projeto-EcoTrack---sustent-vel/
     │
     └── package.json
 
+
+
+
+
+
 ⚙️ Como Executar o Projeto------------------
 🐍 Back-end (FastAPI)
 
