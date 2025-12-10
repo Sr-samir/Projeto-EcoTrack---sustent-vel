@@ -20,6 +20,9 @@ export class CadastroComponent {
   mostrarConfirmarSenha: boolean = false;
   aceitarTermos: boolean = false;
 
+  // ✅ Regex de validação de e-mail
+  private emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   constructor(private http: HttpClient, private router: Router) {}
 
   toggleSenha() {
@@ -31,21 +34,31 @@ export class CadastroComponent {
   }
 
   cadastrar() {
+    // ❗ Verificação de campos vazios
     if (!this.nome || !this.email || !this.senha || !this.confirmarSenha) {
       alert('Preencha todos os campos.');
       return;
     }
 
+    // ✅ Validação de e-mail
+    if (!this.emailRegex.test(this.email)) {
+      alert('E-mail inválido. Insira um endereço válido contendo "@" e domínio.');
+      return;
+    }
+
+    // ❗ Senhas iguais
     if (this.senha !== this.confirmarSenha) {
       alert('As senhas não coincidem.');
       return;
     }
 
+    // ❗ Aceitar termos
     if (!this.aceitarTermos) {
       alert('Você precisa aceitar os Termos de Uso.');
       return;
     }
 
+    // Payload do cadastro
     const payload = {
       nome: this.nome,
       email: this.email,
@@ -68,7 +81,13 @@ export class CadastroComponent {
         },
         error: (err) => {
           console.error('Erro no cadastro', err);
-          alert('Erro ao cadastrar. Tente novamente.');
+
+          // Mensagem personalizada
+          if (err.status === 400 && err.error?.detail) {
+            alert(err.error.detail);
+          } else {
+            alert('Erro ao cadastrar. Tente novamente.');
+          }
         },
       });
   }
